@@ -1,0 +1,57 @@
+@use "./variables" as *;
+@use "sass:color";
+@use "sass:map";
+
+@mixin button-styles($bg-color,$text-color,$border-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  padding: $spacing-unit;
+  border-radius: $radius-unit;
+  cursor: auto;
+  transition: all 0.3s ease-in-out;
+}
+
+@mixin theme-styles($theme) {
+  background-color: map.get($theme, background);
+  color: map.get($theme, text);
+  
+  .app-button {
+    @include button-styles(
+        map.get($theme, primary),
+        map.get($theme, text),
+        map.get($theme, border),
+    );
+    
+    &--seconder {
+      @include button-styles(
+          map.get($theme, secondary),
+          map.get($theme, text),
+          map.get($theme, border),
+      )
+    }
+  }
+}
+
+@mixin margin-padding($margin,$padding) {
+  margin: $margin;
+  padding: $padding;
+}
+
+@mixin icon($size) {
+  .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $size;
+    height: $size;
+    
+    img {
+      width: inherit;
+      height: inherit;
+    }
+    
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}

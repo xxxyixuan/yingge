@@ -1,160 +1,216 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/core";
-
-const greetMsg = ref("");
-const name = ref("");
-
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsg.value = await invoke("greet", { name: name.value });
-}
-</script>
-
 <template>
-  <main class="container">
-    <h1>Welcome to Tauri + Vue</h1>
+    <div id="app-box" class="container" :data-theme="currentTheme">
+        <header class="header" data-tauri-drag-region>
+            <div class="header-left">
+                <div class="logo">
+                    <img src="../public/yingge.ico" alt="莺歌" v-if="currentTheme === 'light'">
+                    <img class="logo-dark" src="../public/yingge.ico" alt="莺歌" v-else>
+                </div>
 
-    <div class="row">
-      <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-      </a>
-      <a href="https://tauri.app" target="_blank">
-        <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-      </a>
+            </div>
+            <div class="header-right">
+                <button class="app-button setting-but" @click="toggleTheme()">
+                    <i class="icon">
+                        <img src="./assets/icons/svg/app_sunny.svg" alt="亮色模式" v-if="currentTheme === 'dark'">
+                        <img src="./assets/icons/svg/app_dark.svg" alt="暗色模式" v-else>
+                    </i>
+                </button>
+                <button class="app-button setting-but">
+                    <i class="icon">
+                        <img src="./assets/icons/svg/user.svg" alt="应用设置" v-if="currentTheme === 'dark'">
+                        <img src="./assets/icons/svg/user_dark.svg" alt="应用设置" v-else>
+                    </i>
+                </button>
+                <button class="app-button setting-but">
+                    <i class="icon">
+                        <img src="./assets/icons/svg/setting.svg" alt="应用设置" v-if="currentTheme === 'dark'">
+                        <img src="./assets/icons/svg/setting_dark.svg" alt="应用设置" v-else>
+                    </i>
+                </button>
+                <div class="separated">|</div>
+                <button class="app-button window-but" @click="minimized()">
+                    <i class="icon"><img src="./assets/icons/svg/window_min.svg" alt="最小化窗口"></i>
+                </button>
+                <button class="app-button window-but" @click="toggleMaximize">
+                    <i class="icon" v-if="true"><img src="./assets/icons/svg/window_max.svg" alt="最大化窗口"></i>
+                    <i class="icon" v-else><img src="./assets/icons/svg/window_formalization.svg" alt="窗口化窗口"></i>
+                </button>
+                <button class="app-button window-but" @click="closeWindow">
+                    <i class="icon"><img src="./assets/icons/svg/window_close.svg" alt="关闭窗口"></i>
+                </button>
+            </div>
+        </header>
+        <main></main>
     </div>
-    <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
-
-    <form class="row" @submit.prevent="greet">
-      <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
-    </form>
-    <p>{{ greetMsg }}</p>
-  </main>
 </template>
 
-<style scoped>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
+<script setup lang="ts">
+import {getCurrentWindow} from '@tauri-apps/api/window';
+import {onMounted, ref} from "vue";
+
+// 主题控制
+const currentTheme = ref("light")
+
+const toggleTheme = () => {
+    currentTheme.value = currentTheme.value === "dark" ? "light" : "dark";
+    localStorage.setItem("theme", currentTheme.value);
+}
+// window 控制
+const appWindow = getCurrentWindow();
+
+const minimized = async () => await appWindow.minimize();
+const toggleMaximize = async () => await appWindow.toggleMaximize();
+
+const closeWindow = async () => await appWindow.close();
+
+//
+onMounted(() => {
+    // 主题控制 获取本地偏好
+    let savedTheme = localStorage.getItem("theme")
+    if (savedTheme) {
+        currentTheme.value = savedTheme;
+    }
+})
+</script>
+
+<style scoped lang="scss">
+@use "sass:color";
+
+/*基础样式*/
+@use "./assets/style/_base.scss" as *;
+@use "./assets/style/_mixins.scss" as *;
+@use "./assets/style/_variables.scss" as *;
+/**/
+@use "./assets/style/main" as *;
+
+.logo {
+  img.logo-dark {
+    filter: invert(1);
+  }
 }
 
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #249b73);
+.app-button.window-but {
+  background-color: transparent;
+  margin-left: 8px;
+  @include icon(16px);
+}
+
+.app-button.setting-but {
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @include icon(20px);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: var(--accent);
+  }
+}
+
+.separated {
+  display: flex;
+  align-items: center;
+  margin: 0 16px;
+  font-size: 16px;
+  color: var(--secondary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 48px;
+  user-select: none;
+  padding: 0 8px;
+  
+  .header-left {
+    display: flex;
+  }
+  
+  .header-right {
+    display: flex;
+  }
 }
 
 </style>
+
+<!--默认样式去除-->
 <style>
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 14px;
 }
 
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+    text-decoration: none;
+    color: inherit;
 }
 
-a:hover {
-  color: #535bf2;
+a:hover, a:focus, a:active, a:hover {
+    color: #333;
 }
 
-h1 {
-  text-align: center;
+ul, ol {
+    list-style: none;
 }
 
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+img {
+    vertical-align: top;
+    border: none;
 }
 
 button {
-  cursor: pointer;
+    border: 0;
+    background: none;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
+section {
+    border: none;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
 }
 
-#greet-input {
-  margin-right: 5px;
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
+input, textarea, select {
+    outline: none;
+    border: none;
+    background: none;
+}
 
-  a:hover {
-    color: #24c8db;
-  }
+textarea {
+    resize: none;
+    overflow: auto;
+}
 
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+input {
+    appearance: textfield;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 </style>

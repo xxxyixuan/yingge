@@ -12,9 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "yingge",
-        "width": 800,
-        "height": 600
+        "title": "莺歌",
+        "width": 1000,
+        "height": 680,
+        "decorations": false,
+        "transparent": false,
+        "dragDropEnabled": false
       }
     ],
     "security": {
@@ -25,10 +28,6 @@
     "active": true,
     "targets": "all",
     "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
       "icons/icon.ico"
     ]
   }

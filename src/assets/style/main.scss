@@ -1,0 +1,55 @@
+@use "./variables" as *;
+@use "./mixins" as *;
+@use "sass:map";
+
+:root, [data-theme=""] {
+  @include theme-styles($light-theme);
+  --primary: #{map.get($light-theme, primary)};
+  --secondary: #{map.get($light-theme, secondary)};
+  --background: #{map.get($light-theme, background)};
+  --text: #{map.get($light-theme, text)};
+  --accent: #{map.get($light-theme, accent)};
+  --border: #{map.get($light-theme, border)};
+}
+
+[data-theme="light"] {
+  @include theme-styles($light-theme);
+  --primary: #{map.get($light-theme, primary)};
+  --secondary: #{map.get($light-theme, secondary)};
+  --background: #{map.get($light-theme, background)};
+  --text: #{map.get($light-theme, text)};
+  --accent: #{map.get($light-theme, accent)};
+  --border: #{map.get($light-theme, border)};
+  
+}
+
+[data-theme="dark"] {
+  @include theme-styles($dark-theme);
+  --primary: #{map.get($dark-theme, primary)};
+  --secondary: #{map.get($dark-theme, secondary)};
+  --background: #{map.get($dark-theme, background)};
+  --text: #{map.get($dark-theme, text)};
+  --accent: #{map.get($dark-theme, accent)};
+  --border: #{map.get($dark-theme, border)};
+}
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding: $spacing-unit;
+  }
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
+  width: 24px;
+  
+  img {
+    width: inherit;
+    height: inherit;
+    color: inherit;
+  }
+}

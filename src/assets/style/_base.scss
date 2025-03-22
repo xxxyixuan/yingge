@@ -1,0 +1,14 @@
+@use "./variables" as *;
+
+.container {
+  min-width: 800px;
+  min-height: 600px;
+  width: 100vw;
+  height: 100vh;
+  font-family: $font-family;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
